@@ -1,8 +1,8 @@
 import { Sequelize } from "sequelize";
 
-const db = new Sequelize("wisata", "root", "", {
-    host: "localhost",
-    dialect: "mysql",
+const db = new Sequelize("Project_Blog", "root", "", {
+  host: "localhost",
+  dialect: "mysql",
 });
 
 export default db;
