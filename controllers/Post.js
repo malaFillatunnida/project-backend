@@ -24,7 +24,10 @@ export const getPostById = async (req, res) => {
 
 export const createPost = async (req, res) => {
   try {
-    await Post.create(req.body);
+    await Post.create({
+      ...req.body,
+      image: req.file.filename,
+    });
     res.json({
       message: "Pots Created",
     });
