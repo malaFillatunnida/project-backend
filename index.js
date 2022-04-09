@@ -6,6 +6,7 @@ import db from "./config/database.js";
 import router from "./routes/index.js";
 import dbCrud from "./config/db.js";
 import crud from "./routes/inde.js";
+import kategori from "./routes/ind.js";
 dotenv.config();
 const app = express();
 try {
@@ -31,5 +32,6 @@ try {
 app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 app.use(express.json());
 app.use("/post", crud);
+app.use("/kategori", kategori);
 
 app.listen(4000, () => console.log("Server running at port 4000"));
