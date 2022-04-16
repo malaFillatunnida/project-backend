@@ -23,6 +23,7 @@ db.sequelize = sequelize;
 db.post = require("./postModel.js")(sequelize, DataTypes);
 db.comment = require("./commentModel.js")(sequelize, DataTypes);
 db.category = require("./categoryModel.js")(sequelize, DataTypes);
+db.user = require("./userModel.js")(sequelize, DataTypes);
 
 db.sequelize.sync({ force: false }).then(() => {
   console.log("yes re-sync done!");
