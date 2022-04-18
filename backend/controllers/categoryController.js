@@ -2,33 +2,18 @@ const db = require("../models");
 const Category = db.category;
 const Post = db.post;
 
-exports.create = (req, res) => {
-  console.log("req : ", req.body);
-  if (!req.body.name) {
-    res.status(400).send({
-      message: "Category can not be empty!",
-    });
-    return;
-  }
-
-  const category = {
+const addCategories = async (req, res) => {
+  let info = {
     name: req.body.name,
   };
 
-  Category.create(category)
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while creating the Category.",
-      });
-    });
+  const category = await Category.create(info);
+  res.status(200).send(category);
+  console.log(category);
 };
 
-exports.findAll = (req, res) => {
-  Category.findAll({
+const getAllCategories = async (req, res) => {
+  let category = await Category.findAll({
     include: [
       {
         model: Post,
@@ -39,33 +24,19 @@ exports.findAll = (req, res) => {
         },
       },
     ],
-  })
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving Category.",
-      });
-    });
+  });
+  res.status(200).send(category);
 };
 
-exports.findOne = (req, res) => {
-  const id = req.params.id;
+// const getOneCategory = async (req, res) => {
+//   let id = req.params.id;
+//   let category = await Category.findByPk(id, {
+//     include: [{ model: Post, as: "post" }],
+//   });
+//   res.status(200).send(category);
+// };
 
-  Category.findByPk(id, { include: [{ model: Post, as: "post" }] })
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: "Error retrieving Category with id=" + id,
-      });
-    });
-};
-
-exports.addPost = (req, res) => {
+const addPost = async (req, res) => {
   const { categoryId, postId } = req.body;
   return Category.findByPk(categoryId)
     .then((category) => {
@@ -96,56 +67,25 @@ exports.addPost = (req, res) => {
     });
 };
 
-exports.update = (req, res) => {
-  const id = req.params.id;
+const updateCategory = async (req, res) => {
+  let id = req.params.id;
 
-  Category.update(req.body, {
-    where: { id: id },
-  })
-    .then((num) => {
-      if (num == 1) {
-        res.send({
-          message: "Category was updated successfully.",
-        });
-      } else {
-        res.send({
-          message: `Cannot update Category with id=${id}. Maybe Category was not found or req.body is empty!`,
-        });
-      }
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: "Error updating Category with id=" + id,
-      });
-    });
+  const category = await Category.update(req.body, { where: { id: id } });
+
+  res.status(200).send(category);
 };
 
-exports.delete = (req, res) => {
-  const id = req.params.id;
+const deleteCategory = async (req, res) => {
+  let id = req.params.id;
 
-  Category.destroy({
-    where: { id: id },
-  })
-    .then((num) => {
-      if (num == 1) {
-        res.send({
-          message: "Category was deleted successfully!",
-        });
-      } else {
-        res.send({
-          message: `Cannot delete Category with id=${id}. Maybe Category was not found!`,
-        });
-      }
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: "Could not delete Category with id=" + id,
-      });
-    });
+  await Category.destroy({ where: { id: id } });
+
+  res.status(200).send("Category is deleted !");
 };
 
-exports.findById = (id) => {
-  return Category.findByPk(id, {
+const getOneCategory = async (req, res) => {
+  let id = req.params.id;
+  let category = await Category.findByPk(id, {
     include: [
       {
         model: Post,
@@ -156,11 +96,15 @@ exports.findById = (id) => {
         },
       },
     ],
-  })
-    .then((category) => {
-      return category;
-    })
-    .catch((err) => {
-      console.log(">> Error while finding Category: ", err);
-    });
+  });
+  res.status(200).send(category);
+};
+
+module.exports = {
+  addCategories,
+  getOneCategory,
+  deleteCategory,
+  updateCategory,
+  getAllCategories,
+  addPost,
 };
