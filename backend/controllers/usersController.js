@@ -22,6 +22,22 @@ const Register = async (req, res) => {
       .json({ msg: "Password dan Confirm Password tidak cocok" });
   const salt = await bcrypt.genSalt();
   const hashPassword = await bcrypt.hash(password, salt);
+  if (!password || password.length < 0) {
+    return res.status(400).json({ msg: "Password tidak boleh kosong" });
+  } else if (!password || password.length < 8) {
+    return res.status(400).json({ msg: "Password minimal harus 8 karakter" });
+  }
+  if (!name || name.length < 0) {
+    return res.status(400).json({ msg: "Username tidak boleh kosong" });
+  } else if (!name || name.length < 8) {
+    return res.status(400).json({ msg: "Username minimal harus 8 karakter" });
+  }
+  const filter = /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+.)+([a-zA-Z0-9]{2,4})+$/;
+  if (!email || email.length < 0) {
+    return res.status(400).json({ msg: "Email tidak boleh kosong " });
+  } else if (!filter.test(email)) {
+    return res.status(400).json({ msg: "Harap sertakan '@' di email " });
+  }
   try {
     await Users.create({
       name: name,
@@ -35,6 +51,16 @@ const Register = async (req, res) => {
 };
 
 const Login = async (req, res) => {
+  const { email, password } = req.body;
+  const filter = /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+.)+([a-zA-Z0-9]{2,4})+$/;
+  if (!password || password.length < 0) {
+    return res.status(400).json({ msg: "Password tidak boleh kosong" });
+  }
+  if (!email || email.length < 0) {
+    return res.status(400).json({ msg: "Email tidak boleh kosong " });
+  } else if (!filter.test(email)) {
+    return res.status(400).json({ msg: "Harap sertakan '@' di email " });
+  }
   try {
     const user = await Users.findAll({
       where: {
